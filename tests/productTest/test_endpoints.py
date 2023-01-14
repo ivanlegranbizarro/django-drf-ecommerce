@@ -1,4 +1,5 @@
 import pytest
+import json
 
 pytestmark = pytest.mark.django_db
 
@@ -8,11 +9,12 @@ class TestCategoryEndpoints:
 
     def test_get_category(self, category_factory, api_client):
         # Arrange
-        category_factory()
+        category_factory.create_batch(3)
         # Act
         response = api_client().get(self.endpoint)
         # Assert
         assert response.status_code == 200
+        assert len(json.loads(response.content)) == 3
 
 
 class TestBrandEndpoints:
@@ -23,9 +25,10 @@ class TestBrandEndpoints:
         brand_factory,
         api_client,
     ):
-        brand_factory()
+        brand_factory.create_batch(3)
         response = api_client().get(self.endpoint)
         assert response.status_code == 200
+        assert len(json.loads(response.content)) == 3
 
 
 class TestProductEndpoints:
@@ -36,6 +39,7 @@ class TestProductEndpoints:
         product_factory,
         api_client,
     ):
-        product_factory()
+        product_factory.create_batch(3)
         response = api_client().get(self.endpoint)
         assert response.status_code == 200
+        assert len(json.loads(response.content)) == 3
