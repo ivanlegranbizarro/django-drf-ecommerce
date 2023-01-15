@@ -1,5 +1,5 @@
-from statistics import mode
 from django.db import models
+from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 
 # Create your models here.
@@ -10,12 +10,17 @@ class Category(MPTTModel):
         max_length=100,
         unique=True,
     )
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
     parent = TreeForeignKey(
         "self", on_delete=models.PROTECT, null=True, blank=True, related_name="children"
     )
 
     class MPTTMeta:
         order_insertion_by = ["name"]
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -26,6 +31,11 @@ class Brand(models.Model):
         max_length=100,
         unique=True,
     )
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -36,6 +46,7 @@ class Product(models.Model):
         max_length=100,
         unique=True,
     )
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(
         blank=True,
         null=True,
@@ -45,6 +56,10 @@ class Product(models.Model):
     category = TreeForeignKey(
         Category, null=True, blank=True, on_delete=models.SET_NULL
     )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
