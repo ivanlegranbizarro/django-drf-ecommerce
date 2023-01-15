@@ -17,9 +17,17 @@ class BrandSerializer(serializers.ModelSerializer):
         read_only_fields = ("slug",)
 
 
+class ProductLineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductLine
+        fields = "__all__"
+        read_only_fields = ("slug",)
+
+
 class ProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
     category = CategorySerializer()
+    product_line = ProductLineSerializer(many=True)
 
     class Meta:
         model = Product
@@ -41,12 +49,3 @@ class ProductSerializer(serializers.ModelSerializer):
         data["brand"] = BrandSerializer(instance.brand).data
         data["category"] = CategorySerializer(instance.category).data
         return data
-
-
-class ProductLineSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
-    class Meta:
-        model = ProductLine
-        fields = "__all__"
-        read_only_fields = ("slug",)

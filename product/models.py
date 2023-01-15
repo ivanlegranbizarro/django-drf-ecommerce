@@ -69,7 +69,9 @@ class ProductLine(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     sku = models.CharField(max_length=100, unique=True)
     stock_qty = models.IntegerField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_line"
+    )
     is_active = models.BooleanField(default=False)
 
     def __str__(self) -> str:
