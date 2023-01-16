@@ -2,7 +2,10 @@ from django.db import models
 from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 
-# Create your models here.
+
+class ActiveProductManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(product_line__is_active=True)
 
 
 class Category(MPTTModel):
@@ -60,6 +63,9 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    objects = models.Manager()
+    active = ActiveProductManager()
 
     def __str__(self):
         return self.name

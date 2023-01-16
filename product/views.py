@@ -57,7 +57,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     This will be generate all the endpoints for the model.
     """
 
-    queryset = Product.objects.select_related("brand", "category")
+    queryset = Product.active.select_related("brand", "category")
     serializer_class = ProductSerializer
     lookup_field = "slug"
     filter_backends = [filters.SearchFilter]
