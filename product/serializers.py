@@ -24,10 +24,16 @@ class ProductLineSerializer(serializers.ModelSerializer):
         read_only_fields = ("slug",)
 
 
+class ProductLineForProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductLine
+        fields = ("price", "sku", "stock_qty")
+
+
 class ProductSerializer(serializers.ModelSerializer):
-    brand = BrandSerializer()
-    category = CategorySerializer()
-    product_line = ProductLineSerializer(many=True)
+    brand = serializers.CharField(source="brand.name", read_only=True)
+    category = serializers.CharField(source="category.name", read_only=True)
+    product_line = ProductLineForProductSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -43,9 +49,3 @@ class ProductSerializer(serializers.ModelSerializer):
             brand=brand, category=category, **validated_data
         )
         return product
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["brand"] = BrandSerializer(instance.brand).data
-        data["category"] = CategorySerializer(instance.category).data
-        return data
